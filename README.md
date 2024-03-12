@@ -1,0 +1,21 @@
+# Proyecto 7
+- Martha Veronica Sanchez Marquez
+- Cohort 07
+# Pruebas de comprobacion de funcionalidad de aplicacion Urban Routes[]
+- Para estas pruebas se utilizarán Python, Selenium y Chrome.
+- Necesitas tener instalado el paquete "selenium web driver (version 4.18.1)"para ejecutar las pruebas.
+- Instalar drivers Selenium
+- 1-Descargar los drivers deacuerdo a tu navegador.
+- 2-Descomprime el archivo. Crea una carpeta llamada WebDriver/bin y guarda el archivo allí.
+- 3-Agrega la ruta a bin a la variable de entorno PATH. El algoritmo depende del sistema operativo.
+- Instalacion de Selenium Web Driver
+- 1- Abrir la Consola o Terminal Terminal desde las aplicaciones o usando el buscador de aplicaciones.
+- 2-Escribe el siguiente comando para instalar el paquete de Selenium "pip install selenium".
+- 3-Una vez que la instalación esté completa, es una buena práctica verificar que el paquete se haya instalado correctamente.
+- 4-Ahora abre un proyecto en PyCharm. 
+- Importa el paquete Selenium WebDriver: "from selenium import webdriver"
+- 5-Ahora podemos asegurarnos de que Selenium está conectado.
+- Para hacerlo, necesitas ejecutar un código. 
+- 6-Busca el archivo connect_selenium_in_pycharm.py y ábrelo en PyCharm.
+- 7-Ejecuta todas las pruebas con el comando selenium.
+- 
