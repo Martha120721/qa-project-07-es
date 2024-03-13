@@ -1,35 +1,8 @@
 import data
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
-
-def retrieve_phone_code(driver) -> str:
-    """Este código devuelve un número de confirmación de teléfono y lo devuelve como un string.
-    Utilízalo cuando la aplicación espere el código de confirmación para pasarlo a tus pruebas.
-    El código de confirmación del teléfono solo se puede obtener después de haberlo solicitado en la aplicación."""
-
-    import json
-    import time
-    from selenium.common import WebDriverException
-    code = None
-    for i in range(10):
-        try:
-            logs = [log["message"] for log in driver.get_log('performance') if log.get("message")
-                    and 'api/v1/number?number' in log.get("message")]
-            for log in reversed(logs):
-                message_data = json.loads(log)["message"]
-                body = driver.execute_cdp_cmd('Network.getResponseBody',
-                                              {'requestId': message_data["params"]["requestId"]})
-                code = ''.join([x for x in body['body'] if x.isdigit()])
-        except WebDriverException:
-            time.sleep(1)
-            continue
-        if not code:
-            raise Exception("No se encontró el código de confirmación del teléfono.\n"
-                            "Utiliza 'retrieve_phone_code' solo después de haber solicitado el código en tu aplicación.")
-        return code
+import utils
 
 
 class UrbanRoutesPage:
@@ -66,6 +39,10 @@ class UrbanRoutesPage:
         elm_comfort = self.driver.find_element(By.XPATH, '//img[@alt="Comfort"]') # Elegir tipo de comfort.
         elm_comfort.click()
 
+    def get_type_comfort_value(self):
+        return self.driver.find_element(By.XPATH, "//div[@class='tcard active']//div[text()='Comfort']").text
+
+
     def click_on_enter_phone_number(self):
         WebDriverWait(self.driver, 5).until(
             expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".np-text")))
@@ -91,7 +68,7 @@ class UrbanRoutesPage:
         WebDriverWait(self.driver, 5).until(
             expected_conditions.presence_of_element_located((By.ID, "code")))
         elm_code = self.driver.find_element(By.ID, 'code') #Colocar código de confirmación.
-        self.phone_code = retrieve_phone_code(self.driver)
+        self.phone_code = utils.retrieve_phone_code(self.driver)
         elm_code.send_keys(self.phone_code)
 
     def get_phone_code_received(self):
@@ -152,19 +129,31 @@ class UrbanRoutesPage:
     def get_message_for_driver(self):
         return self.driver.find_element(By.ID, 'comment').get_property('value')
 
-    def select_scarves(self):
-        elm_scarves = self.driver.find_element(By.CSS_SELECTOR, '.switch') # Seleccionar pañuelos.
-        elm_scarves.click()
+    def select_tissues(self):
+        elm_tissues = self.driver.find_element(By.CSS_SELECTOR, '.switch') # Seleccionar pañuelos.
+        elm_tissues.click()
 
+    def get_select_tissues_value(self):
+        elm_tissues = self.driver.find_element(By.CSS_SELECTOR, '.switch')  # Seleccionar pañuelos.
+        return elm_tissues.find_element(By.CSS_SELECTOR, '.switch-input').is_selected()
 
     def select_ice_creams(self):
         elm_ice_creams= self.driver.find_element(By.CSS_SELECTOR, '.counter-plus') # Seleccionar helados.
         elm_ice_creams.click()
         elm_ice_creams.click()
 
+    def get_select_ice_cream(self):
+        return self.driver.find_element(By.CSS_SELECTOR, '.counter-value').text
+
     def look_model_taxi(self):
-            elm_modal = self.driver.find_element(By.CSS_SELECTOR, '.smart-button') # Visualizar modal buscar taxi.
-            elm_modal.click()
+        elm_modal = self.driver.find_element(By.CSS_SELECTOR, '.smart-button') # Visualizar modal buscar taxi.
+        elm_modal.click()
+
+    def get_look_model_taxi(self):
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".order.shown")))
+
+        return self.driver.find_element(By.CSS_SELECTOR, '.order.shown').get_attribute('class')
 
     def wait_for_page_to_load(self):
         # Asegurar que la página ha terminado de cargar
